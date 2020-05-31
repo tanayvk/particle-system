@@ -24,7 +24,7 @@ jobs:
       with:
         path: |
           ${{ github.workspace }}/Build
-        key: ${{ runner.os }}
+        key: ${{ runner.os }}-${{ hashFiles('**/CMakeLists.txt') }}
 
     - name: Upload build as artifact
       uses: actions/upload-artifact@v1
@@ -58,7 +58,7 @@ jobs:
       with:
         path: |
           ${{ github.workspace }}/Build
-        key: ${{ runner.os }}-${{ hashFiles(github.workspace + '/CMakeLists.txt') }}
+        key: ${{ runner.os }}-${{ hashFiles('**/CMakeLists.txt') }}
 
     - name: Upload build as artifact
       uses: actions/upload-artifact@v1

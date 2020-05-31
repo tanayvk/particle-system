@@ -19,7 +19,7 @@ jobs:
         key: ${{ runner.os }}
 
     - name: Generate Visual Studio 19 build files
-      run: cmake ${{ github.workspace }} -B ${{ github.workspace }}/Build -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 16 2019"
+      run: cmake ${{ github.workspace }} -B ${{ github.workspace }}/Build -G "Visual Studio 16 2019"
 
     - name: Compile using Visual Studio 19
       run: |

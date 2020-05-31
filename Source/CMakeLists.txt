@@ -9,7 +9,7 @@ include_directories(ThirdParty/glew/include)
 
 add_library(Sandbox STATIC Sandbox.cpp)
 target_link_libraries(Sandbox PRIVATE SDL2
-                                      $<$<PLATFORM_ID:Windows>:SDLmain>
+                                      $<$<PLATFORM_ID:Windows>:SDL2main>
                                       glew
                                       OpenGL::GL)
 

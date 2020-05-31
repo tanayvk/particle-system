@@ -7,7 +7,10 @@ add_subdirectory(ThirdParty/glew)
 include_directories(ThirdParty/SDL2/include)
 
 add_library(Sandbox STATIC Sandbox.cpp)
-target_link_libraries(Sandbox PRIVATE SDL2 SDL2main glew OpenGL::GL)
+target_link_libraries(Sandbox PRIVATE SDL2
+                                      $<$<PLATFORM_ID:Windows>:SDLmain>
+                                      glew
+                                      OpenGL::GL)
 
 add_executable(Main Main.cpp)
 target_link_libraries(Main Sandbox)

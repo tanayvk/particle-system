@@ -11,8 +11,15 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v2
 
+    - name: Cache multiple paths
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ github.workspace }}/Build
+        key: ${{ runner.os }}
+
     - name: Generate Visual Studio 19 build files
-      run: cmake ${{ github.workspace }} -B ${{ github.workspace }}/Build -G "Visual Studio 16 2019"
+      run: cmake ${{ github.workspace }} -B ${{ github.workspace }}/Build -DCMAKE_BUILD_TYPE=Release -G "Visual Studio 16 2019"
 
     - name: Compile using Visual Studio 19
       run: |
@@ -40,6 +47,13 @@ jobs:
     - name: Checkout source code
       uses: actions/checkout@v2
       
+    - name: Cache multiple paths
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ github.workspace }}/Build
+        key: ${{ runner.os }}
+
     - name: Generate ninja build files
       run: cmake $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/Build -GNinja
 

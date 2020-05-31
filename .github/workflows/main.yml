@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  windows-build:
+    runs-on: windows-latest
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v2
+
+    - name: Install Ninja for compiling
+      run: |
+        (New-Object System.Net.WebClient).DownloadFile("https://github.com/ninja-build/ninja/releases/download/v1.10.0/ninja-win.zip", "Ninja.zip")
+        7z e Ninja.zip ninja.exe   
+
+    - name: Generate ninja build files
+      run: cmake ${{ github.workspace }} -B ${{ github.workspace }}/Build -GNinja -DCMAKE_MAKE_PROGRAM="$(get-location)\ninja.exe"
+
+    - name: Compile using Ninja
+      run: ./ninja -C ${{ github.workspace }}/Build
+        
+    - name: Upload build as artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: windows-build
+        path: ${{ github.workspace }}/Build
+
+  linux-build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: apt update
+      run: sudo apt-get update
+      
+    - name: Install Ninja for compiling
+      run: sudo apt-get install -y ninja-build
+      
+    - name: Checkout source code
+      uses: actions/checkout@v2
+      
+    - name: Generate ninja build files
+      run: cmake $GITHUB_WORKSPACE -B $GITHUB_WORKSPACE/Build -GNinja
+
+    - name: Compile using Ninja
+      run: ninja -C $GITHUB_WORKSPACE/Build
+
+    - name: Upload build as artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: ubuntu-build
+        path: Build
+  

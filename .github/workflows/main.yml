@@ -34,6 +34,9 @@ jobs:
     - name: apt update
       run: sudo apt-get update
       
+    - name: Install mesa for OpenGL
+      run: sudo apt-get install libgl1-mesa-dev
+
     - name: Install Ninja for compiling
       run: sudo apt-get install -y ninja-build
       

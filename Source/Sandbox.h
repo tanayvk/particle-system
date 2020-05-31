@@ -21,4 +21,7 @@ private:
     bool SDLIsInitialized;
     SDL_Window* Window;
     SDL_GLContext Context;
+
+    unsigned int VAO;
+    unsigned int shaderProgram;
 };

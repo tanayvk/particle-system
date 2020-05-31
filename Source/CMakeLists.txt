@@ -5,6 +5,7 @@ add_subdirectory(ThirdParty/SDL2)
 add_subdirectory(ThirdParty/glew)
 
 include_directories(ThirdParty/SDL2/include)
+include_directories(ThirdParty/glew/include)
 
 add_library(Sandbox STATIC Sandbox.cpp)
 target_link_libraries(Sandbox PRIVATE SDL2

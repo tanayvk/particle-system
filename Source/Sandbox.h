@@ -1,5 +1,6 @@
+#pragma once
+
 #include <SDL.h>
-#include <vector>
 
 class Sandbox {
 public:
@@ -11,6 +12,8 @@ public:
     bool IsRunning() { return AmIRunning; }
 private:
     void ProcessInput();
+    bool MousePressed;
+
     void Update();
     void Render();
 
@@ -22,6 +25,5 @@ private:
     SDL_Window* Window;
     SDL_GLContext Context;
 
-    unsigned int VAO;
-    unsigned int shaderProgram;
+    class ParticleSystem* Particles;
 };

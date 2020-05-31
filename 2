@@ -1,14 +1,5 @@
 #include "ParticleSystem.h"
-#include <SDL.h>
-#include <GL/glew.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <SDL_opengl.h>
-#include "Util.h"
 
-#include <glm/gtc/constants.hpp>
-#include <glm/gtx/compatibility.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 ParticleSystem::ParticleSystem()
 {
@@ -17,7 +8,6 @@ ParticleSystem::ParticleSystem()
 
 bool ParticleSystem::Initialize(int poolSize)
 {
-    glEnable(GL_BLEND);
 	float vertices[] = {
 		0.5f, -0.5f, 0.0f,
 		0.5f, 0.5f, 0.0f,
@@ -77,31 +67,12 @@ bool ParticleSystem::Initialize(int poolSize)
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-
-    Particles.resize(poolSize);
-
-    return 1;
 }
 
 
 void ParticleSystem::Update(float deltaMs)
 {
-    int count = 0;
-    for (Particle& particle: Particles)
-    {
-        if ( !particle.Active )
-            continue;
 
-        particle.RemainingLife -= deltaMs;
-        if ( particle.RemainingLife <= 1.0f )
-        {
-            particle.Active = false;
-            continue;
-        }
-
-        particle.Rotation += particle.RotationSpeed * deltaMs;
-        particle.Position += particle.Velocity * deltaMs;
-    }
 }
 
 void ParticleSystem::Render()
@@ -110,11 +81,11 @@ void ParticleSystem::Render()
     ShaderColorLocation = glGetUniformLocation(ShaderProgram, "Color");
     ShaderTransformLocation = glGetUniformLocation(ShaderProgram, "Transform");
 
-    for (Particle& particle: Particles)
+    for (Particle particle: Particles)
     {	
         if ( !particle.Active )
             continue;
-        SDL_Log("Drawing particle!");
+
         float life = particle.RemainingLife / particle.LifeTime;
 		glm::vec4 color = glm::lerp(particle.EndColor, particle.StartColor, life);
 
@@ -123,7 +94,7 @@ void ParticleSystem::Render()
         glm::mat4 transform = glm::translate(glm::mat4(1.0f), { particle.Position.x, particle.Position.y, 0.0f })
 			                  * glm::rotate(glm::mat4(1.0f), particle.Rotation, { 0.0f, 0.0f, 1.0f })
 			                  * glm::scale(glm::mat4(1.0f), { size, size, 1.0f });
-        glUniform4fv(ShaderColorLocation, 1, glm::value_ptr(color));
+        glUniform4fv(ShaderColorLocation, 1, glm::value_ptr(color);
         glUniformMatrix4fv(ShaderTransformLocation, 1, GL_FALSE, glm::value_ptr(transform));
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -132,28 +103,21 @@ void ParticleSystem::Render()
 
 void ParticleSystem::Emit(ParticleProps props)
 {
-    for (Particle& particle: Particles)
+    for (Particle particle: Particles)
     {
         if ( particle.Active )
             continue;
 
-        particle.RemainingLife = particle.LifeTime = props.LifeTime;
+        particle.LifeTime = props.LifeTime;
         particle.StartColor = props.StartColor;
         particle.EndColor = props.EndColor;
         particle.StartSize = props.StartSize;
         particle.EndSize = props.EndSize;
-        particle.Position = props.Position;
-
-        particle.RotationSpeed = 0.5;
-        particle.Velocity = glm::vec2(0.5f, 0.25f);
-        particle.VelocityVariation = glm::vec2(0.5f, 0.25f);
-        particle.Active = true;
-
-        break;
+        particle.Position = props.Postion;
     }
 }
 
-ParticleSystem::~ParticleSystem()
+~ParticleSystem::ParticleSystem()
 {
-    
+
 }

@@ -8,9 +8,9 @@ include_directories(ThirdParty/SDL2/include)
 include_directories(ThirdParty/glew/include)
 
 # Add glm (header only library)
-add_subdirectory(ThirdParty/glm/glm)
+include_directories(ThirdParty/glm)
 
-add_library(Sandbox STATIC Sandbox.cpp ParticleSystem.cpp)
+add_library(Sandbox STATIC Sandbox.cpp ParticleSystem.cpp Util.cpp)
 target_link_libraries(Sandbox PRIVATE SDL2
                                       $<$<PLATFORM_ID:Windows>:SDL2main>
                                       glew

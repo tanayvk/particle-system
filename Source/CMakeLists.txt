@@ -1,5 +1,6 @@
 find_package(OpenGL)
 include_directories( ${OPENGL_INCLUDE_DIRS} )
+
 add_subdirectory(ThirdParty/SDL2)
 add_subdirectory(ThirdParty/glew)
 

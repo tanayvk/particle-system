@@ -10,6 +10,8 @@
 #include "Util.h"
 #include "ParticleSystem.h"
 
+#include <glm/glm.hpp>
+
 const int windowHeight = 1000;
 const int windowWidth = 1000;
 
@@ -20,6 +22,7 @@ Sandbox::Sandbox()
     TicksCount = 0;
     Particles = nullptr;
     MousePressed = false;
+    lastMouseX = lastMouseY = 0;
 }
 
 bool Sandbox::Initialize()
@@ -33,7 +36,7 @@ bool Sandbox::Initialize()
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 3 );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
 
-    Window = SDL_CreateWindow("Top Down Sandbox",
+    Window = SDL_CreateWindow("Particles!",
                               SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED,
                               windowWidth,
@@ -58,7 +61,7 @@ bool Sandbox::Initialize()
     SDL_Log("Initialized everything fine!\nNow doing graphics!");
 
     Particles = new ParticleSystem();
-    Particles->Initialize(100);
+    Particles->Initialize(1000);
 
     SDL_Log("Initialization successful!");
     return 1;
@@ -93,13 +96,12 @@ void Sandbox::ProcessInput()
             break;
         case SDL_MOUSEBUTTONDOWN:
             if (event.button.button == SDL_BUTTON_LEFT)
-            {
                 MousePressed = true;
-            }
             break;
         case SDL_MOUSEBUTTONUP:
             if (event.button.button == SDL_BUTTON_LEFT)
                 MousePressed = false;
+            break;
         }
     }
 }
@@ -118,22 +120,25 @@ void Sandbox::Update()
     }
     TicksCount = SDL_GetTicks();
 
-    if ( MousePressed && TicksCount % 3 == 0)
+    if ( MousePressed && TicksCount % 3 > 0)
     {
-        int x, y;
+        int x, y, mouseX, mouseY;
+        SDL_GetMouseState(&mouseX, &mouseY);
         SDL_GetMouseState(&x, &y);
-        x -= 500;
-        y = -y + 500;
-        SDL_Log("Caught left mouse event at %d, %d!", x, y);
+        x -= windowWidth/2;
+        y = -y + windowHeight/2;
 
         ParticleProps props;
         props.LifeTime = 2.0f;
         props.StartColor = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
         props.EndColor = glm::vec4(0.0f, 1.0f, 1.0f, 0.0f);
-        props.StartSize = 0.08f;
-        props.EndSize = 0.02f;
-        props.Position = glm::vec2((float)x / 500, (float)y / 500);
-        SDL_Log("particle position %f, %f", props.Position.x, props.Position.y);
+        props.StartSize = 0.1f;
+        props.EndSize = 0.01f;
+        props.Position = glm::vec2(2.0f*(float)x/windowWidth, 2.0f*(float)y/windowHeight);
+        props.Velocity = 0.5f * glm::normalize(glm::vec2((float) lastMouseX - (float) mouseX, (float) mouseY - (float) lastMouseY));
+        
+        props.VelocityVariation = glm::vec2(0.3f, 0.3f);
+        SDL_Log("particle velocity %f, %f", props.Velocity.x, props.Velocity.y);
         // velocity, velocity variation & rotation speed
         Particles->Emit(props);
     }
@@ -145,6 +150,8 @@ void Sandbox::Update()
     {
         SDL_Log("%s", glewGetErrorString(err));
     }
+
+    SDL_GetMouseState(&lastMouseX, &lastMouseY);
 }
 
 void Sandbox::Render()

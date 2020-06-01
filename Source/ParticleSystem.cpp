@@ -10,6 +10,9 @@
 #include <glm/gtx/compatibility.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <ctime>
+#include <cstdlib>
+
 ParticleSystem::ParticleSystem()
 {
 
@@ -36,8 +39,7 @@ bool ParticleSystem::Initialize(int poolSize)
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
-    
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -114,7 +116,6 @@ void ParticleSystem::Render()
     {	
         if ( !particle.Active )
             continue;
-        SDL_Log("Drawing particle!");
         float life = particle.RemainingLife / particle.LifeTime;
 		glm::vec4 color = glm::lerp(particle.EndColor, particle.StartColor, life);
 
@@ -144,9 +145,11 @@ void ParticleSystem::Emit(ParticleProps props)
         particle.EndSize = props.EndSize;
         particle.Position = props.Position;
 
-        particle.RotationSpeed = 0.5;
-        particle.Velocity = glm::vec2(0.5f, 0.25f);
-        particle.VelocityVariation = glm::vec2(0.5f, 0.25f);
+        particle.RotationSpeed = 1.0f;
+        particle.Velocity = props.Velocity;
+        particle.VelocityVariation = props.VelocityVariation;
+        particle.Velocity += glm::vec2(((float)(std::rand() % 5000)/2500 - 1.0f) * particle.VelocityVariation.x,
+                                       ((float)(std::rand() % 5000)/2500 - 1.0f) * particle.VelocityVariation.y);
         particle.Active = true;
 
         break;

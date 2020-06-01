@@ -13,6 +13,8 @@ public:
 private:
     void ProcessInput();
     bool MousePressed;
+    int lastMouseX;
+    int lastMouseY;
 
     void Update();
     void Render();
